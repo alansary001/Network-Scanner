@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <meta charset="UTF-8">
+    <title>Scan Results</title>
+</head>
+<body>
+    <h1>Scan Results</h1>
+    {% for target, result in results.items() %}
+        <h2>Results for {{ target }}</h2>
+        {% if result.error %}
+            <p>{{ result.error }}</p>
+        {% else %}
+            <h3>Scanned Ports:</h3>
+            <ul>
+            {% for res in result.scan_results %}
+                <li>Service: {{ res.service }}, Version: {{ res.version }}, Port: {{ res.port }}/{{ res.protocol }}</li>
+            {% endfor %}
+            </ul>
+            <h3>Vulnerabilities:</h3>
+            <ul>
+            {% for service, vulns in result.vulnerabilities.items() %}
+                <li>{{ service }}: 
+                    <ul>
+                    {% for vuln in vulns %}
+                        <li>{{ vuln }}</li>
+                    {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        <a href="/download/{{ target }}_vulnerability_report.pdf">Download PDF Report</a>
+    {% endfor %}
+    <br>
+    <a href="/">Scan another IP</a>
+</body>
+</html>
